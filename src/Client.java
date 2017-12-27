@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Client {
+public class Client implements Runnable{
 	Socket connection;
 	public Client(String hostname,int port) {
 		try {
@@ -15,6 +15,7 @@ public class Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		new Thread(this).start();
 	}
 	
 	void sendChar(char character) {
@@ -33,8 +34,15 @@ public class Client {
 		sendChar('\n'); //Sending end line character
 	}
 	//TO-DO
-	void receiveChar() {
-		
+	char receiveChar() {
+		try {
+			char c = (char) connection.getInputStream().read();
+			return c;
+		} catch (IOException e) {
+			System.out.println("Couldn't receive the byte from the server");
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	void closeConnection() {
@@ -43,6 +51,14 @@ public class Client {
 		} catch (IOException e) {
 			System.out.println("Can't close connection. Error: ");
 			e.printStackTrace();
+		}
+	}
+
+	//Used to get data from the server
+	public void run() {
+		while(connection.isConnected()) {
+		char c = receiveChar();
+		System.out.print(c);
 		}
 	}
 }

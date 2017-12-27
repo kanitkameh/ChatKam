@@ -20,6 +20,7 @@ public class Connection implements Runnable{
 			character = input.read();
 			while(character != -1){
 				System.out.print((char)character);
+				Server.sendCharAcrossAllClients((char)character);
 				character = input.read();
 			}
 		} catch (IOException e) {

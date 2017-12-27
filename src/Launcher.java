@@ -14,9 +14,8 @@ public class Launcher {
 			System.out.println("Enter IP to join: ");
 			order = input.nextLine();
 			Client me = new Client(order,2704);
-			
+			System.out.println("Welcome to the chat! Type \"EXIT\" to close conneciton)");
 			do{
-				System.out.println("Enter next message(Type EXIT to close conneciton)");
 				order = input.nextLine();
 				if(order.equals("EXIT")) {
 					break;
