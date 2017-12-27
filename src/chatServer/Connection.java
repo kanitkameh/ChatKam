@@ -21,7 +21,7 @@ public class Connection implements Runnable{
 			byte [] inputBytes = new byte[64];
 			int len = input.read(inputBytes);
 			while(len != 0 && (!socket.isClosed())){
-				String str = new String(inputBytes, "UTF-8");
+				String str = new String(inputBytes, 0,len);
 				System.out.println(str);
 				if(str.startsWith("/")) {
 					String [] order = str.split("/");

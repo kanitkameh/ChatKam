@@ -42,7 +42,7 @@ public class Client implements Runnable{
 			if(!connection.isClosed()) {
 				byte [] inputBytes = new byte[64];
 				int len = in.read(inputBytes);
-				String str = new String(inputBytes);
+				String str = new String(inputBytes,0,len);
 				return str;
 			}
 		} catch (IOException e) {
@@ -67,7 +67,7 @@ public class Client implements Runnable{
 	public void run() {
 		while(!connection.isClosed()) {
 		String str = receiveString();
-		System.out.print(str);
+		System.out.println(str);
 		}
 	}
 }

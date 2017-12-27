@@ -37,7 +37,7 @@ public class Server {
 //sends string as a private message
 static void sendString(String str, Connection source, InetAddress dest) {
 		for(Connection entry : connections) {
-				if(entry.socket.getInetAddress()==dest) {
+				if(entry.socket.getInetAddress().equals(dest)) {
 					try {
 						entry.socket.getOutputStream().write((source.socket.getInetAddress()+":"+str).getBytes());
 					} catch (IOException e) {
