@@ -16,12 +16,7 @@ public class Launcher {
 			order = input.nextLine();
 			Client me = new Client(order,2704);
 			me.sendChar('1');
-			try {
-				me.connection.close();
-			} catch (IOException e) {
-				System.out.println("Can't close connection. Error: ");
-				e.printStackTrace();
-			}
+			me.closeConnection();
 		}else {
 			System.out.println("You have entered invalid input.");
 		}

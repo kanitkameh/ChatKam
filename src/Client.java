@@ -29,4 +29,13 @@ public class Client {
 	void receiveChar() {
 		
 	}
+	
+	void closeConnection() {
+		try {
+			connection.close();
+		} catch (IOException e) {
+			System.out.println("Can't close connection. Error: ");
+			e.printStackTrace();
+		}
+	}
 }
