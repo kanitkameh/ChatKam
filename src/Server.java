@@ -34,10 +34,11 @@ public class Server {
 		try {
 			input = socket.getInputStream();
 			int character;
-			do{
-				character = input.read();
+			character = input.read();
+			while(character != -1){
 				System.out.print((char)character);
-			}while(character != -1);
+				character = input.read();
+			}
 		} catch (IOException e) {
 			System.out.println("Couldn't get input stream. Error:");
 			e.printStackTrace();
