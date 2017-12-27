@@ -25,6 +25,13 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
+	
+	void sendString(String str) {
+		for(int i=0;i<str.length();i++) {
+			sendChar(str.charAt(i));
+		}
+		sendChar('\n'); //Sending end line character
+	}
 	//TO-DO
 	void receiveChar() {
 		
