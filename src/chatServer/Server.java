@@ -1,6 +1,7 @@
 package chatServer;
 import java.io.IOException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +34,12 @@ public class Server {
 		}
 	}
 	
-//sends byte accross all clients except the one send as argument connection
-static void sendCharAcrossAllClients(char c, Connection connection) {
+//sends string as a private message
+static void sendString(String str, Connection source, InetAddress dest) {
 		for(Connection entry : connections) {
-				if(entry!=connection) {
+				if(entry.socket.getInetAddress()==dest) {
 					try {
-						entry.socket.getOutputStream().write(c);
+						entry.socket.getOutputStream().write((source.socket.getInetAddress()+":"+str).getBytes());
 					} catch (IOException e) {
 						System.out.println("Couldn't write byte to clients. Error: ");
 						
@@ -57,13 +58,13 @@ static void sendCharAcrossAllClients(char c, Connection connection) {
 	}
 	
 //sends byte accross every client, inclunding the sender of the message
-static void sendCharAcrossAllClients(char c) {
-		for(Connection entry : connections) {
+static void sendString(String str, Connection source) {
+			for(Connection entry : connections) {
 				try {
-					entry.socket.getOutputStream().write(c);
+					entry.socket.getOutputStream().write((source.socket.getInetAddress()+":"+str).getBytes(StandardCharsets.UTF_8.name()));
 				} catch (IOException e) {
 					System.out.println("Couldn't write byte to clients. Error: ");
-					
+							
 					System.out.println("Removing :"+entry);
 					try {
 						entry.socket.close();
@@ -71,7 +72,7 @@ static void sendCharAcrossAllClients(char c) {
 						e1.printStackTrace();
 					}
 					connections.remove(entry);
-					
+							
 					e.printStackTrace();
 			}
 		}

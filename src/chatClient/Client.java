@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 public class Client implements Runnable{
 	Socket connection;
@@ -26,33 +27,29 @@ public class Client implements Runnable{
 		new Thread(this).start();
 	}
 	
-	public void sendChar(char character) {
+	public void sendString(String str) {
 		try {
-			out.write(character);
+			out.write(str.getBytes(StandardCharsets.UTF_8.name()));
 		} catch (IOException e) {
 			System.out.println("Couldn't send char. Error: ");
 			e.printStackTrace();
 		}
 	}
 	
-	public void sendString(String str) {
-		for(int i=0;i<str.length();i++) {
-			sendChar(str.charAt(i));
-		}
-		sendChar('\n'); //Sending end line character
-	}
 	//TO-DO
-	char receiveChar() {
+	String receiveString() {
 		try {
 			if(!connection.isClosed()) {
-			char c = (char) in.read();
-			return c;
+				byte [] inputBytes = new byte[64];
+				int len = in.read(inputBytes);
+				String str = new String(inputBytes);
+				return str;
 			}
 		} catch (IOException e) {
 			System.out.println("Couldn't receive the byte from the server");
 			e.printStackTrace();
 		}
-		return 0;
+		return "empty";
 	}
 	
 	public void closeConnection() {
@@ -69,8 +66,8 @@ public class Client implements Runnable{
 	//Used to get data from the server
 	public void run() {
 		while(!connection.isClosed()) {
-		char c = receiveChar();
-		System.out.print(c);
+		String str = receiveString();
+		System.out.print(str);
 		}
 	}
 }

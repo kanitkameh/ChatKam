@@ -1,6 +1,7 @@
 package chatServer;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class Connection implements Runnable{
@@ -17,12 +18,18 @@ public class Connection implements Runnable{
 		InputStream input;
 		try {
 			input = socket.getInputStream();
-			int character;
-			character = input.read();
-			while(character != -1 && (!socket.isClosed())){
-				System.out.print((char)character);
-				Server.sendCharAcrossAllClients((char)character,this);
-				character = input.read();
+			byte [] inputBytes = new byte[64];
+			int len = input.read(inputBytes);
+			while(len != 0 && (!socket.isClosed())){
+				String str = new String(inputBytes, "UTF-8");
+				System.out.println(str);
+				if(str.startsWith("/")) {
+					String [] order = str.split("/");
+					Server.sendString(order[2], this, InetAddress.getByName(order[1]));
+				}else {
+					Server.sendString(str, this);
+				}
+				len = input.read(inputBytes);
 			}
 		} catch (IOException e) {
 			System.out.println("Couldn't get input stream. Error:");
