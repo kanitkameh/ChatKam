@@ -1,3 +1,4 @@
+package chatServer;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class Server {
 		}
 	}
 	
-	void startListening() {
+	public void startListening() {
 		try {
 			while(true) { //server keeps waiting for connection till force stop
 				Connection newConnection = new Connection(serverSocket.accept());

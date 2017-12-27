@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+import chatClient.Client;
+import chatClient.*;
+import chatServer.*;
 public class Launcher {
 
 	public static void main(String[] args) {

@@ -1,3 +1,4 @@
+package chatClient;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -18,7 +19,7 @@ public class Client implements Runnable{
 		new Thread(this).start();
 	}
 	
-	void sendChar(char character) {
+	public void sendChar(char character) {
 		try {
 			connection.getOutputStream().write(character);
 		} catch (IOException e) {
@@ -27,7 +28,7 @@ public class Client implements Runnable{
 		}
 	}
 	
-	void sendString(String str) {
+	public void sendString(String str) {
 		for(int i=0;i<str.length();i++) {
 			sendChar(str.charAt(i));
 		}
@@ -47,7 +48,7 @@ public class Client implements Runnable{
 		return 0;
 	}
 	
-	void closeConnection() {
+	public void closeConnection() {
 		try {
 			connection.close();
 		} catch (IOException e) {
