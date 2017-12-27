@@ -33,6 +33,7 @@ public class Server {
 		}
 	}
 	
+//sends byte accross all clients except the one send as argument connection
 static void sendCharAcrossAllClients(char c, Connection connection) {
 		for(Connection entry : connections) {
 			if(entry!=connection) {
@@ -46,4 +47,16 @@ static void sendCharAcrossAllClients(char c, Connection connection) {
 		}
 	}
 	
+//sends byte accross every client, inclunding the sender of the message
+static void sendCharAcrossAllClients(char c) {
+	for(Connection entry : connections) {
+			try {
+				entry.socket.getOutputStream().write(c);
+			} catch (IOException e) {
+				System.out.println("Couldn't write byte to clients. Error: ");
+				e.printStackTrace();
+			}
+		}
+	}
+
 }
