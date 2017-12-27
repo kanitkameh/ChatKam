@@ -36,8 +36,10 @@ public class Client implements Runnable{
 	//TO-DO
 	char receiveChar() {
 		try {
+			if(!connection.isClosed()) {
 			char c = (char) connection.getInputStream().read();
 			return c;
+			}
 		} catch (IOException e) {
 			System.out.println("Couldn't receive the byte from the server");
 			e.printStackTrace();
@@ -56,7 +58,7 @@ public class Client implements Runnable{
 
 	//Used to get data from the server
 	public void run() {
-		while(connection.isConnected()) {
+		while(!connection.isClosed()) {
 		char c = receiveChar();
 		System.out.print(c);
 		}

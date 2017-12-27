@@ -32,13 +32,15 @@ public class Server {
 		}
 	}
 	
-static void sendCharAcrossAllClients(char c) {
+static void sendCharAcrossAllClients(char c, Connection connection) {
 		for(Connection entry : connections) {
-			try {
-				entry.socket.getOutputStream().write(c);
-			} catch (IOException e) {
-				System.out.println("Couldn't write byte to clients. Error: ");
-				e.printStackTrace();
+			if(entry!=connection) {
+				try {
+					entry.socket.getOutputStream().write(c);
+				} catch (IOException e) {
+					System.out.println("Couldn't write byte to clients. Error: ");
+					e.printStackTrace();
+				}
 			}
 		}
 	}
