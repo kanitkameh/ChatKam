@@ -1,14 +1,21 @@
 package chatClient;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Client implements Runnable{
 	Socket connection;
+	OutputStream out;
+	InputStream in;
 	public Client(String hostname,int port) {
 		try {
 			this.connection = new Socket(hostname,port);
 			System.out.println("Successfully connected to the server");
+			
+			out = connection.getOutputStream();
+			in = connection.getInputStream();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -21,7 +28,7 @@ public class Client implements Runnable{
 	
 	public void sendChar(char character) {
 		try {
-			connection.getOutputStream().write(character);
+			out.write(character);
 		} catch (IOException e) {
 			System.out.println("Couldn't send char. Error: ");
 			e.printStackTrace();
@@ -38,7 +45,7 @@ public class Client implements Runnable{
 	char receiveChar() {
 		try {
 			if(!connection.isClosed()) {
-			char c = (char) connection.getInputStream().read();
+			char c = (char) in.read();
 			return c;
 			}
 		} catch (IOException e) {
@@ -50,6 +57,8 @@ public class Client implements Runnable{
 	
 	public void closeConnection() {
 		try {
+			out.close();
+			in.close();
 			connection.close();
 		} catch (IOException e) {
 			System.out.println("Can't close connection. Error: ");
