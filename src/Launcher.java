@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Launcher {
@@ -15,7 +14,15 @@ public class Launcher {
 			System.out.println("Enter IP to join: ");
 			order = input.nextLine();
 			Client me = new Client(order,2704);
-			me.sendChar('1');
+			
+			do{
+				System.out.println("Enter next message(Type EXIT to close conneciton)");
+				order = input.nextLine();
+				if(order.equals("EXIT")) {
+					break;
+				}
+				me.sendString(order);
+			}while(true);
 			me.closeConnection();
 		}else {
 			System.out.println("You have entered invalid input.");
