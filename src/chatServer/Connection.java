@@ -19,7 +19,7 @@ public class Connection implements Runnable{
 			input = socket.getInputStream();
 			int character;
 			character = input.read();
-			while(character != -1){
+			while(character != -1 && (!socket.isClosed())){
 				System.out.print((char)character);
 				Server.sendCharAcrossAllClients((char)character,this);
 				character = input.read();
