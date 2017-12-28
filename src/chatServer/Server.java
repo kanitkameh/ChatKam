@@ -39,7 +39,7 @@ static void sendString(String str, Connection source, InetAddress dest) {
 		for(Connection entry : connections) {
 				if(entry.socket.getInetAddress().equals(dest)) {
 					try {
-						entry.socket.getOutputStream().write((source.socket.getInetAddress()+":"+str).getBytes());
+						entry.socket.getOutputStream().write((source.socket.getInetAddress()+" has sent you a DM: "+str).getBytes());
 					} catch (IOException e) {
 						System.out.println("Couldn't write byte to clients. Error: ");
 						
@@ -61,7 +61,7 @@ static void sendString(String str, Connection source, InetAddress dest) {
 static void sendString(String str, Connection source) {
 			for(Connection entry : connections) {
 				try {
-					entry.socket.getOutputStream().write((source.socket.getInetAddress()+":"+str).getBytes(StandardCharsets.UTF_8.name()));
+					entry.socket.getOutputStream().write((source.socket.getInetAddress()+": "+str).getBytes(StandardCharsets.UTF_8.name()));
 				} catch (IOException e) {
 					System.out.println("Couldn't write byte to clients. Error: ");
 							
