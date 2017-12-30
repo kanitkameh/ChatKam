@@ -42,15 +42,6 @@ static void sendString(String str, Connection source, InetAddress dest) {
 						entry.socket.getOutputStream().write((source.socket.getInetAddress()+" has sent you a DM: "+str).getBytes());
 					} catch (IOException e) {
 						System.out.println("Couldn't write byte to clients. Error: ");
-						
-						System.out.println("Removing :"+entry);
-						try {
-							entry.socket.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-						connections.remove(entry);
-						
 						e.printStackTrace();
 				}
 			}
@@ -63,16 +54,7 @@ static void sendString(String str, Connection source) {
 				try {
 					entry.socket.getOutputStream().write((source.socket.getInetAddress()+": "+str).getBytes(StandardCharsets.UTF_8.name()));
 				} catch (IOException e) {
-					System.out.println("Couldn't write byte to clients. Error: ");
-							
-					System.out.println("Removing :"+entry);
-					try {
-						entry.socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-					connections.remove(entry);
-							
+					System.out.println("Couldn't write byte to clients. Error: ");	
 					e.printStackTrace();
 			}
 		}
