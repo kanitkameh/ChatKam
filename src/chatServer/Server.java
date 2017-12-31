@@ -48,6 +48,7 @@ public class Server {
 static void sendString(String str, Connection source, String username) {
 		for(User entry : users) {
 			if(userConn.get(entry)==null) {
+				System.out.println(entry.username+" has missed a message: "+connUser.get(source).username+" has sent you a DM: "+str);
 				entry.missedMessages.add(connUser.get(source).username+": "+str);
 			}else if(entry.username.equals(username)) {
 					writeToSocket(userConn.get(entry),(connUser.get(source).username+" has sent you a DM: "+str));
@@ -77,6 +78,7 @@ public static void tryToRegister(String username, String password, Connection co
 		}
 		//reached only if return is not issued(username not taken)
 		User toAdd = new User(username,password);
+		System.out.println(conn.socket.getInetAddress()+"has registered as "+username);
 		writeToSocket(conn,"Successfully registered.\nNow you have to login in your account.");
 		users.add(toAdd);
 	}
@@ -96,7 +98,7 @@ public static void tryToLinkWithAccount(String username, String password, Connec
 					
 					conn.isLinkedWithAccount = true;
 					writeToSocket(conn,"Welcome back!");
-					
+					System.out.println(conn.socket.getInetAddress()+" has logged in "+username);
 					Iterator<String> iter = entry.missedMessages.iterator();
 					while(iter.hasNext()) {
 						String missedMessage = iter.next();
