@@ -29,11 +29,12 @@ public class Connection implements Runnable{
 					System.out.println("Removing :"+this);
 					try {
 						this.socket.close();
-						Server.map.remove(this);
+						Server.connUser.remove(this);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 					Server.connections.remove(this);
+					break;
 				}else {
 					String str = new String(inputBytes, 0,len);
 					System.out.println(str);

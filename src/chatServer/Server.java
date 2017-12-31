@@ -6,6 +6,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class Server {
@@ -13,7 +14,9 @@ public class Server {
 	ServerSocket serverSocket;
 	static List<Connection> connections = new ArrayList<Connection>();
 	static List<User> users = new ArrayList<User>();
-	static HashMap<Connection, User> map = new HashMap<Connection, User>();
+	//using two maps as a replacement of bidirectional map
+	static HashMap<Connection, User> connUser = new HashMap<Connection, User>();
+	static HashMap<User, Connection> userConn = new HashMap<User, Connection>();
 	public Server(int port) {
 		try {
 			serverSocket = new ServerSocket(port);
@@ -43,17 +46,25 @@ public class Server {
 	
 //sends string as a private message
 static void sendString(String str, Connection source, String username) {
-		for(Connection entry : connections) {
-				if(map.get(entry).username.equals(username)) {
-					writeToSocket(entry,(map.get(source).username+" has sent you a DM: "+str));
+		for(User entry : users) {
+			if(userConn.get(entry)==null) {
+				entry.missedMessages.add(connUser.get(source).username+": "+str);
+			}else if(entry.username.equals(username)) {
+					writeToSocket(userConn.get(entry),(connUser.get(source).username+" has sent you a DM: "+str));
+					return;
 			}
 		}
 	}
 	
 //sends byte accross every client, inclunding the sender of the message
 static void sendString(String str, Connection source) {
-		for(Connection entry : connections) {
-			writeToSocket(entry,(map.get(source).username+": "+str));
+		for(User entry : users) {
+			if(userConn.get(entry)==null) {
+				System.out.println(entry.username+" has missed a message: "+connUser.get(source).username+": "+str);
+				entry.missedMessages.add(connUser.get(source).username+": "+str);
+			}else {
+				writeToSocket(userConn.get(entry),(connUser.get(source).username+": "+str));
+			}
 		}
 	}
 
@@ -75,18 +86,24 @@ public static void tryToLinkWithAccount(String username, String password, Connec
 		for(User entry : users) {
 			if(entry.username.equals(username)) {
 				if(entry.password.equals(password)) {
-					if(map.containsKey(conn)) {
+					if(connUser.containsKey(conn)) {
 						writeToSocket(conn,"Account is being used at the moment.");
 						return;
 					}
 					//Map link
-					map.put(conn, entry);
+					connUser.put(conn, entry);
+					userConn.put(entry, conn);
+					
 					conn.isLinkedWithAccount = true;
 					writeToSocket(conn,"Welcome back!");
-					for(String missedMessage : map.get(conn).missedMessages) {
-						writeToSocket(conn,missedMessage);
-						map.get(conn).missedMessages.remove(missedMessage);
+					
+					Iterator<String> iter = entry.missedMessages.iterator();
+					while(iter.hasNext()) {
+						String missedMessage = iter.next();
+						writeToSocket(userConn.get(entry),missedMessage);
+						iter.remove();
 					}
+					
 					return;
 				}else {
 					writeToSocket(conn,"Wrong password.");
@@ -106,7 +123,7 @@ public static void writeToSocket(Connection conn, String str) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Couldn't write byte to clients. Error: ");	
-			map.get(conn).missedMessages.add(str);
+			connUser.get(conn).missedMessages.add(str);
 			e.printStackTrace();
 		}
 	}
