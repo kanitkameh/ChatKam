@@ -69,8 +69,8 @@ public class Client implements Runnable{
 	public void run() {
 		while(!connection.isClosed()) {
 		String str = receiveString();
-		gui.messageArea.append(str+'\n');
 		System.out.println(str);
+		if(gui!=null)gui.messageArea.append(str+'\n');
 		}
 	}
 }

@@ -15,6 +15,21 @@ public class Launcher {
 		}else if(order.equals("client")) {
 			chatClient.GUI clientGUI = new chatClient.GUI(640, 320);
 			clientGUI.setUpWindowComponents();
+		}else if(order.equals("client-cli")) {
+			System.out.println("Enter IP to join: ");
+			order = input.nextLine();
+			System.out.println("Enter port number:");
+			int port = input.nextInt();
+			chatClient.Client me = new chatClient.Client(order,port,null);
+			System.out.println("Welcome to the chat! Type \"EXIT\" to close conneciton)");
+			do{
+				order = input.nextLine();
+				if(order.equals("EXIT")) {
+					break;
+				}
+				me.sendString(order);
+			}while(true);
+			me.closeConnection();
 		}else {
 			System.out.println("You have entered invalid input.");
 		}
