@@ -10,7 +10,9 @@ public class Client implements Runnable{
 	Socket connection;
 	OutputStream out;
 	InputStream in;
-	public Client(String hostname,int port) {
+	GUI gui;
+	public Client(String hostname,int port,GUI gui) {
+		this.gui=gui;
 		try {
 			this.connection = new Socket(hostname,port);
 			System.out.println("Successfully connected to the server");
@@ -67,6 +69,7 @@ public class Client implements Runnable{
 	public void run() {
 		while(!connection.isClosed()) {
 		String str = receiveString();
+		gui.messageArea.append(str+'\n');
 		System.out.println(str);
 		}
 	}

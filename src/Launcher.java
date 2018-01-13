@@ -1,6 +1,4 @@
 import java.util.Scanner;
-import chatClient.*;
-import chatServer.*;
 
 public class Launcher {
 
@@ -12,23 +10,11 @@ public class Launcher {
 			System.out.println("Enter port number:");
 			int port = input.nextInt();
 			System.out.println("Starting server on port "+port);
-			Server me = new Server(port);
+			chatServer.Server me = new chatServer.Server(port);
 			me.startListening();
 		}else if(order.equals("client")) {
-			System.out.println("Enter IP to join: ");
-			order = input.nextLine();
-			System.out.println("Enter port number:");
-			int port = input.nextInt();
-			Client me = new Client(order,port);
-			System.out.println("Welcome to the chat! Type \"EXIT\" to close conneciton)");
-			do{
-				order = input.nextLine();
-				if(order.equals("EXIT")) {
-					break;
-				}
-				me.sendString(order);
-			}while(true);
-			me.closeConnection();
+			chatClient.GUI clientGUI = new chatClient.GUI(640, 320);
+			clientGUI.setUpWindowComponents();
 		}else {
 			System.out.println("You have entered invalid input.");
 		}

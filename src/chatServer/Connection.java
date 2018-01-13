@@ -37,7 +37,7 @@ public class Connection implements Runnable{
 					break;
 				}else {
 					String str = new String(inputBytes, 0,len);
-					System.out.println(Server.connUser.get(this).username+":"+str);
+					System.out.println(socket.getInetAddress()+" : "+str);
 					if(!isLinkedWithAccount) {
 						String[] creditentials = str.split(" ");
 						if(str.startsWith("/register")) {
