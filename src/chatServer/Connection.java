@@ -49,8 +49,13 @@ public class Connection implements Runnable{
 						System.gc(); //remove the creditentials string array
 					}else if(isLinkedWithAccount) {
 						if(str.startsWith("/")) {
+							
 							String [] order = str.split("/");
-							Server.sendString(order[2], this, order[1]);
+							if(order.length<3) {
+								System.out.println(socket.getInetAddress()+" has entered an incomplete direct message command");
+							}else {
+								Server.sendString(order[2], this, order[1]);
+							}
 						}else {
 							Server.sendString(str, this);
 						}
