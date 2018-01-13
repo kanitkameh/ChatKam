@@ -37,12 +37,10 @@ public class GUI {
 		//adding window components
 		messageArea = new TextArea();
 		messageArea.setRows(10);
-		messageArea.setVisible(true);
 		messageArea.setEditable(false);
 		
 		input = new TextField();
 		input.setColumns(64);
-		input.setVisible(true);
 		input.setEditable(false);
 		
 		setConnectionDialog();
