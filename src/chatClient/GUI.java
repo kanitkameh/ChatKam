@@ -1,14 +1,18 @@
 
-
 package chatClient;
 
+import java.awt.Button;
+import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextArea;
 import java.awt.TextField;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -42,38 +46,67 @@ public class GUI {
 		input.setColumns(64);
 		input.setVisible(true);
 		
-		String order="localhost";
-		int port=2704;
-		me = new Client(order,port,this);
+		setConnectionDialog();
 		
-		input.addKeyListener(new KeyListener() {
-			
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if(arg0.getKeyCode()==10) {
-					me.sendString(input.getText());
-					input.setText("");
-				}
-				
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
+		input.addKeyListener(new KeyboardInput(this));
 		
 		frame.add(messageArea);
 		frame.add(input);
 		frame.validate();
-		System.out.println("window set");
+		System.out.println("Window UI set");
+	}
+	void setConnectionDialog() {
+		Dialog getHost = new Dialog(frame, "Server selection");
+		getHost.setLayout(new FlowLayout());
+		getHost.setVisible(true);
+		
+		Label l = new Label("Enter Server IP and port");
+		getHost.add(l);
+		
+		TextField IP = new TextField();
+		IP.setText("localhost");
+		getHost.add(IP);
+		
+		TextField port = new TextField();
+		port.setText("2704");
+		getHost.add(port);
+		
+		
+		Button b = new Button("Connect!");
+		b.addMouseListener(new ConnectButtonListener(IP, port, this));
+		getHost.add(b);
+		
+		getHost.pack();
+	}
+}
+class ConnectButtonListener extends MouseAdapter{
+	String IP;
+	int port;
+	GUI guiController;
+	
+	ConnectButtonListener(TextField IP,TextField port,GUI guiController){
+		this.IP = IP.getText();
+		this.port = Integer.parseInt(port.getText());
+		this.guiController = guiController;
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		guiController.me = new Client(IP,port,guiController);
+	}
+	
+}
+class KeyboardInput extends KeyAdapter {
+	GUI guiController;
+	
+	KeyboardInput(GUI guiController){
+		this.guiController = guiController;
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		if(e.getKeyChar()=='\n') {
+			guiController.me.sendString(guiController.input.getText());
+			guiController.input.setText("");
+		}
 	}
 }
