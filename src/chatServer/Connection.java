@@ -40,7 +40,9 @@ public class Connection implements Runnable{
 					System.out.println(socket.getInetAddress()+" : "+str);
 					if(!isLinkedWithAccount) {
 						String[] creditentials = str.split(" ");
-						if(str.startsWith("/register")) {
+						if(creditentials.length<3) {
+							System.out.println(socket.getInetAddress()+" has entered an incomplete register command");
+						}else if(str.startsWith("/register")) {
 							Server.tryToRegister(creditentials[1],creditentials[2],this);
 						}else if(str.startsWith("/login")) {
 							Server.tryToLinkWithAccount(creditentials[1],creditentials[2],this);

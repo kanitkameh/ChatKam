@@ -34,7 +34,7 @@ public class Server {
 				connections.add(newConnection);
 				System.out.println(newConnection.socket.getInetAddress()+" has connected");
 				writeToSocket(newConnection,"Welcome to ChatKam Server\n "
-						+ "You must make an account in order to char.\nTo register type /register username password\n"
+						+ "You must make an account in order to chat.\nTo register type /register username password\n"
 						+ "To login type /login username password\nHave Fun!");
 				new Thread(newConnection).start(); //starting thread for every new client
 			}
@@ -102,7 +102,7 @@ public static void tryToLinkWithAccount(String username, String password, Connec
 					Iterator<String> iter = entry.missedMessages.iterator();
 					while(iter.hasNext()) {
 						String missedMessage = iter.next();
-						writeToSocket(userConn.get(entry),missedMessage);
+						writeToSocket(userConn.get(entry),missedMessage+"\n");
 						iter.remove();
 					}
 					
