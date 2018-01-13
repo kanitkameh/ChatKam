@@ -1,4 +1,3 @@
-
 package chatClient;
 
 import java.awt.Button;
@@ -35,8 +34,7 @@ public class GUI {
 	}
 	public void setUpWindowComponents() {
 		frame.setLayout(new FlowLayout());
-		
-		
+		//adding window components
 		messageArea = new TextArea();
 		messageArea.setRows(10);
 		messageArea.setVisible(true);
@@ -45,6 +43,7 @@ public class GUI {
 		input = new TextField();
 		input.setColumns(64);
 		input.setVisible(true);
+		input.setEditable(false);
 		
 		setConnectionDialog();
 		
@@ -55,6 +54,7 @@ public class GUI {
 		frame.validate();
 		System.out.println("Window UI set");
 	}
+	//dialog to get server ip and port
 	void setConnectionDialog() {
 		Dialog getHost = new Dialog(frame, "Server selection");
 		getHost.setLayout(new FlowLayout());
@@ -71,27 +71,30 @@ public class GUI {
 		port.setText("2704");
 		getHost.add(port);
 		
-		
 		Button b = new Button("Connect!");
-		b.addMouseListener(new ConnectButtonListener(IP, port, this));
+		b.addMouseListener(new ConnectButtonListener(IP, port, this, getHost));
 		getHost.add(b);
 		
 		getHost.pack();
 	}
 }
+//private classes which override default UI listeners
 class ConnectButtonListener extends MouseAdapter{
 	String IP;
 	int port;
 	GUI guiController;
-	
-	ConnectButtonListener(TextField IP,TextField port,GUI guiController){
+	Dialog toClose; //we get rid of the dialog after connecting to the server
+	ConnectButtonListener(TextField IP,TextField port,GUI guiController,Dialog toClose){
 		this.IP = IP.getText();
 		this.port = Integer.parseInt(port.getText());
 		this.guiController = guiController;
+		this.toClose = toClose;
 	}
 	
 	public void mouseClicked(MouseEvent e) {
 		guiController.me = new Client(IP,port,guiController);
+		guiController.input.setEditable(true); //we can write in the chat only when we are connected to a server
+		toClose.dispose();
 	}
 	
 }
