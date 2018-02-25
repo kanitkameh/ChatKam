@@ -6,7 +6,9 @@ import java.net.Socket;
 public class Connection implements Runnable{
 	Socket socket;
 	boolean isLinkedWithAccount;
-	public Connection(Socket socket) {
+	Server serverObj;
+	public Connection(Socket socket,Server serverObj) {
+		this.serverObj = serverObj;
 		this.socket = socket;
 		this.isLinkedWithAccount = false; //every connection starts unlinked
 	}
@@ -29,11 +31,11 @@ public class Connection implements Runnable{
 					System.out.println("Removing :"+this);
 					try {
 						this.socket.close();
-						Server.connUser.remove(this);
+						serverObj.connUser.remove(this);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					Server.connections.remove(this);
+					serverObj.connections.remove(this);
 					break;
 				}else {
 					String str = new String(inputBytes, 0,len);
@@ -43,9 +45,9 @@ public class Connection implements Runnable{
 						if(creditentials.length<3) {
 							System.out.println(socket.getInetAddress()+" has entered an incomplete register command");
 						}else if(str.startsWith("/register")) {
-							Server.tryToRegister(creditentials[1],creditentials[2],this);
+							serverObj.tryToRegister(creditentials[1],creditentials[2],this);
 						}else if(str.startsWith("/login")) {
-							Server.tryToLinkWithAccount(creditentials[1],creditentials[2],this);
+							serverObj.tryToLinkWithAccount(creditentials[1],creditentials[2],this);
 						}
 						creditentials = null;
 						System.gc(); //remove the creditentials string array
@@ -56,10 +58,10 @@ public class Connection implements Runnable{
 							if(order.length<3) {
 								System.out.println(socket.getInetAddress()+" has entered an incomplete direct message command");
 							}else {
-								Server.sendString(order[2], this, order[1]);
+								serverObj.sendString(order[2], this, order[1]);
 							}
 						}else {
-							Server.sendString(str, this);
+							serverObj.sendString(str, this);
 						}
 					}
 					len = input.read(inputBytes);

@@ -1,8 +1,5 @@
 package chatServer;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
@@ -12,14 +9,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import chatServer.UsersDatabase;
+
 public class Server {
 	
 	ServerSocket serverSocket;
-	static List<Connection> connections = new ArrayList<Connection>();
-	static List<User> users = new ArrayList<User>();
+	List<Connection> connections = new ArrayList<Connection>();
+	UsersDatabase users;
 	//using two maps as a replacement of bidirectional map
-	static HashMap<Connection, User> connUser = new HashMap<Connection, User>();
-	static HashMap<User, Connection> userConn = new HashMap<User, Connection>();
+	HashMap<Connection, User> connUser = new HashMap<Connection, User>();
+	HashMap<User, Connection> userConn = new HashMap<User, Connection>();
+	
 	public Server(int port) {
 		try {
 			serverSocket = new ServerSocket(port);
@@ -28,30 +28,16 @@ public class Server {
 			System.out.println("Couldn't initialize server. Error is:");
 			e.printStackTrace();
 		}
-		try {
-			BufferedReader database = new BufferedReader(new FileReader("database.sav"));
-			while(database.ready()) {
-				String[] input = database.readLine().split("/");
-				User entry = new User(input[0],input[1]);
-				for(int i=2;i<input.length;i++) {
-					entry.missedMessages.add(input[i]);
-				}
-				users.add(entry);
-			}
-			database.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Database file not found.\nStarting with a new empty database!");
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		users = new UsersDatabase("data.sav");
+		users.readData();
+		Thread dbSync = new Thread(new DatabaseUpdater(users, 2000));
+		dbSync.start();
 	}
 	
 	public void startListening() {
 		try {
 			while(true) { //server keeps waiting for connection till force stop
-				Connection newConnection = new Connection(serverSocket.accept());
+				Connection newConnection = new Connection(serverSocket.accept(),this);
 				connections.add(newConnection);
 				System.out.println(newConnection.socket.getInetAddress()+" has connected");
 				writeToSocket(newConnection,"Welcome to ChatKam Server\n "
@@ -66,8 +52,8 @@ public class Server {
 	}
 	
 //sends string as a private message
-static void sendString(String str, Connection source, String username) {
-		for(User entry : users) {
+void sendString(String str, Connection source, String username) {
+		for(User entry : users.users) {
 			if(userConn.get(entry)==null) {
 				System.out.println(entry.username+" has missed a message: "+connUser.get(source).username+" has sent you a DM: "+str);
 				entry.missedMessages.add(connUser.get(source).username+": "+str);
@@ -79,8 +65,8 @@ static void sendString(String str, Connection source, String username) {
 	}
 	
 //sends byte accross every client, inclunding the sender of the message
-static void sendString(String str, Connection source) {
-		for(User entry : users) {
+void sendString(String str, Connection source) {
+		for(User entry : users.users) {
 			if(userConn.get(entry)==null) {
 				System.out.println(entry.username+" has missed a message: "+connUser.get(source).username+": "+str);
 				entry.missedMessages.add(connUser.get(source).username+": "+str);
@@ -90,8 +76,8 @@ static void sendString(String str, Connection source) {
 		}
 	}
 
-public static void tryToRegister(String username, String password, Connection conn) {
-		for(User entry : users) {
+void tryToRegister(String username, String password, Connection conn) {
+		for(User entry : users.users) {
 			if(entry.username.equals(username)) {
 				writeToSocket(conn,"Username already taken.");
 				return;
@@ -101,12 +87,12 @@ public static void tryToRegister(String username, String password, Connection co
 		User toAdd = new User(username,password);
 		System.out.println(conn.socket.getInetAddress()+"has registered as "+username);
 		writeToSocket(conn,"Successfully registered.\nNow you have to login in your account.");
-		users.add(toAdd);
+		users.users.add(toAdd);
 	}
 
-public static void tryToLinkWithAccount(String username, String password, Connection conn) {
+void tryToLinkWithAccount(String username, String password, Connection conn) {
 		//probably sorting the users and using binary search would be better TO-DO
-		for(User entry : users) {
+		for(User entry : users.users) {
 			if(entry.username.equals(username)) {
 				if(entry.password.equals(password)) {
 					if(connUser.containsKey(conn)) {
@@ -138,7 +124,7 @@ public static void tryToLinkWithAccount(String username, String password, Connec
 		writeToSocket(conn,"Username not found.");
 	}
 
-public static void writeToSocket(Connection conn, String str) {
+void writeToSocket(Connection conn, String str) {
 		try {
 			conn.socket.getOutputStream().write((str).getBytes(StandardCharsets.UTF_8.name()));
 		} catch (UnsupportedEncodingException e) {

@@ -1,8 +1,9 @@
 package chatServer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class User {
+public class User implements Serializable{
 	String username;
 	String password;
 	ArrayList<String> missedMessages;
