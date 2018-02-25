@@ -1,5 +1,8 @@
 package chatServer;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
@@ -23,6 +26,24 @@ public class Server {
 			System.out.println("Server has been initialized successfully!");
 		} catch (IOException e) {
 			System.out.println("Couldn't initialize server. Error is:");
+			e.printStackTrace();
+		}
+		try {
+			BufferedReader database = new BufferedReader(new FileReader("database.sav"));
+			while(database.ready()) {
+				String[] input = database.readLine().split("/");
+				User entry = new User(input[0],input[1]);
+				for(int i=2;i<input.length;i++) {
+					entry.missedMessages.add(input[i]);
+				}
+				users.add(entry);
+			}
+			database.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Database file not found.\nStarting with a new empty database!");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
