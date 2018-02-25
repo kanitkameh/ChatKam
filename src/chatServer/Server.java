@@ -51,8 +51,8 @@ public class Server {
 		}
 	}
 	
-//sends string as a private message
-void sendString(String str, Connection source, String username) {
+	//sends string as a private message
+	void sendString(String str, Connection source, String username) {
 		for(User entry : users.users) {
 			if(userConn.get(entry)==null) {
 				System.out.println(entry.username+" has missed a message: "+connUser.get(source).username+" has sent you a DM: "+str);
@@ -64,8 +64,8 @@ void sendString(String str, Connection source, String username) {
 		}
 	}
 	
-//sends byte accross every client, inclunding the sender of the message
-void sendString(String str, Connection source) {
+	//sends byte accross every client, inclunding the sender of the message
+	void sendString(String str, Connection source) {
 		for(User entry : users.users) {
 			if(userConn.get(entry)==null) {
 				System.out.println(entry.username+" has missed a message: "+connUser.get(source).username+": "+str);
@@ -76,7 +76,7 @@ void sendString(String str, Connection source) {
 		}
 	}
 
-void tryToRegister(String username, String password, Connection conn) {
+	void tryToRegister(String username, String password, Connection conn) {
 		for(User entry : users.users) {
 			if(entry.username.equals(username)) {
 				writeToSocket(conn,"Username already taken.");
@@ -90,7 +90,7 @@ void tryToRegister(String username, String password, Connection conn) {
 		users.users.add(toAdd);
 	}
 
-void tryToLinkWithAccount(String username, String password, Connection conn) {
+	void tryToLinkWithAccount(String username, String password, Connection conn) {
 		//probably sorting the users and using binary search would be better TO-DO
 		for(User entry : users.users) {
 			if(entry.username.equals(username)) {
@@ -124,7 +124,7 @@ void tryToLinkWithAccount(String username, String password, Connection conn) {
 		writeToSocket(conn,"Username not found.");
 	}
 
-void writeToSocket(Connection conn, String str) {
+	void writeToSocket(Connection conn, String str) {
 		try {
 			conn.socket.getOutputStream().write((str).getBytes(StandardCharsets.UTF_8.name()));
 		} catch (UnsupportedEncodingException e) {
